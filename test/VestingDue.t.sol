@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "forge-std/Test.sol";
+import "@forge-std/Test.sol";
 
-contract ContractTest is Test {
+contract VestingDueTest is Test {
     function setUp() public {}
 
     function testExample() public {
