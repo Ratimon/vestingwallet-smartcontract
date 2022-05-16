@@ -12,8 +12,6 @@ contract VestingDue is Initializable, VestingWallet {
         address beneficiaryAddress,
         uint64 startTimestamp,
         uint64 durationSeconds,
-        // address _tokenLocked,
-        // IERC20 token_,
         uint256 intervalInteger
     )
         // uint256 totalLock
@@ -23,13 +21,6 @@ contract VestingDue is Initializable, VestingWallet {
             block.timestamp < startTimestamp + durationSeconds,
             "TokenTimelock: release time is before current time"
         );
-
-        // // IERC20(_tokenLocked).transferFrom(msg.sender, address(this), totalLock);
-
-        // require(
-        //     totalLock == IERC20(_tokenLocked).balanceOf(address(this)),
-        //     "TokenTimelock: Token is not yet transfered"
-        // );
 
         interval = intervalInteger;
     }
