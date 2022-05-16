@@ -26,18 +26,22 @@ contract VestingDueTest is DSTest {
         vm.label(address(token), "TestToken");
 
         vestingdue = new VestingDue(alice, 1672506000, 365 days, 12);
-        token.mint(bob, 12000 ether);
+        // token.mint(bob, 12000 ether);
 
-        vm.startPrank(bob);
-        IERC20(address(token)).approve(address(vestingdue), 12000 ether);
-        vestingdue.init(address(token), 12000 ether);
-        vm.stopPrank();
+        // vm.startPrank(bob);
+        // IERC20(address(token)).approve(address(vestingdue), 12000 ether);
+        // vestingdue.init(address(token), 12000 ether);
+        // vm.stopPrank();
     }
 
-    function test_ConstructNonZeroTokenRevert() public {
-        // vm.expectRevert(VestingDue.TokenAddressCannotBeZero.selector);
+    function test_ConstructNonZeroAddressRevert() public {
+        vm.expectRevert(bytes("VestingWallet: beneficiary is zero address"));
+        new VestingDue(address(0), 1672506000, 365 days, 12);
+    }
+
+    function test_ConstructBeforeReleaseRevert() public {
         vm.expectRevert(
-            bytes("TokenTimelock: release time is before current time")
+            bytes("VestingDue: release time is before current time")
         );
 
         // 1672506000    // Date and time (GMT): Saturday, December 31, 2022 5:00:00 PM
@@ -46,5 +50,36 @@ contract VestingDueTest is DSTest {
         vm.warp(1804042000);
 
         new VestingDue(alice, 1672506000, 365 days, 12);
+    }
+
+    function test_ConstructNonZeroIntervalRevert() public {
+        vm.expectRevert(VestingDue.AmountCannotBeZero.selector);
+
+        new VestingDue(alice, 1672506000, 365 days, 0);
+    }
+
+    function test_InitNonZeroAddressRevert() public {
+        vm.expectRevert(VestingDue.AddressCannotBeZero.selector);
+        vestingdue.init(address(0), 1200);
+    }
+
+    function test_InitNonZeroTokenRevert() public {
+        vm.expectRevert(VestingDue.AmountCannotBeZero.selector);
+        vestingdue.init(address(token), 0);
+    }
+
+    function test_InitTokenTransferedNotEqualRevert() public {
+        token.mint(bob, 14000 ether);
+
+        vm.startPrank(bob);
+
+        IERC20(address(token)).approve(address(vestingdue), 12000 ether);
+        IERC20(address(token)).transfer(address(vestingdue), 2000 ether);
+
+        vm.expectRevert(
+            bytes("VestingDue: Tokens transfered != actual balance")
+        );
+        vestingdue.init(address(token), 12000);
+        vm.stopPrank();
     }
 }
