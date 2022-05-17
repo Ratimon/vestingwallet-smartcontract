@@ -57,29 +57,4 @@ contract VestingDueTest is DSTest {
 
         new VestingDue(alice, 1672506000, 365 days, 0);
     }
-
-    function test_InitNonZeroAddressRevert() public {
-        vm.expectRevert(VestingDue.AddressCannotBeZero.selector);
-        vestingdue.init(address(0), 1200);
-    }
-
-    function test_InitNonZeroTokenRevert() public {
-        vm.expectRevert(VestingDue.AmountCannotBeZero.selector);
-        vestingdue.init(address(token), 0);
-    }
-
-    function test_InitTokenTransferedNotEqualRevert() public {
-        token.mint(bob, 14000 ether);
-
-        vm.startPrank(bob);
-
-        IERC20(address(token)).approve(address(vestingdue), 12000 ether);
-        IERC20(address(token)).transfer(address(vestingdue), 2000 ether);
-
-        vm.expectRevert(
-            bytes("VestingDue: Tokens transfered != actual balance")
-        );
-        vestingdue.init(address(token), 12000);
-        vm.stopPrank();
-    }
 }

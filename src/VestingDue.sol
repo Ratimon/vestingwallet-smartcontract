@@ -21,14 +21,10 @@ contract VestingDue is Initializable, VestingWallet {
         uint64 durationSeconds,
         uint256 intervalInteger
     ) VestingWallet(beneficiaryAddress, startTimestamp, durationSeconds) {
-        // if (beneficiaryAddress == address(0)) revert AddressCannotBeZero();
-
         require(
             block.timestamp < startTimestamp + durationSeconds,
             "VestingDue: release time is before current time"
         );
-
-        // require(intervalInteger != 0, "intervalInteger cannot be the zero");
         if (intervalInteger == 0) revert AmountCannotBeZero();
 
         _duration = durationSeconds;
