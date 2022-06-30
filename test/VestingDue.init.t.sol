@@ -14,6 +14,12 @@ contract VestingDueTest is DSTest {
     address alice = address(0x1337);
     address bob = address(0x133702);
 
+    // 1672506000    // Date and time (GMT): Saturday, December 31, 2022 5:00:00 PM
+    uint64 startTime = 1672506000;
+    uint64 duration = 365 days;
+    uint256 interval = 12;
+    // uint256 vestingAmount = 12000 ether;
+
     MockERC20 token;
     VestingDue vestingdue;
 
@@ -25,7 +31,7 @@ contract VestingDueTest is DSTest {
         token = new MockERC20("TestToken", "TT0", 18);
         vm.label(address(token), "TestToken");
 
-        vestingdue = new VestingDue(alice, 1672506000, 365 days, 12);
+        vestingdue = new VestingDue(alice, startTime, duration, interval);
         // token.mint(bob, 12000 ether);
 
         // vm.startPrank(bob);

@@ -14,6 +14,12 @@ contract VestingDueTest is DSTest {
     address alice = address(0x1337);
     address bob = address(0x133702);
 
+    // 1672506000    // Date and time (GMT): Saturday, December 31, 2022 5:00:00 PM
+    uint64 startTime = 1672506000;
+    uint64 duration = 365 days;
+    uint256 interval = 12;
+    uint256 vestingAmount = 12000 ether;
+
     MockERC20 token;
     VestingDue vestingdue;
 
@@ -26,21 +32,33 @@ contract VestingDueTest is DSTest {
         vm.label(address(token), "TestToken");
 
         // 1672506000    // Date and time (GMT): Saturday, December 31, 2022 5:00:00 PM
-        vestingdue = new VestingDue(alice, 1672506000, 365 days, 12);
-        token.mint(bob, 12000 ether);
+        vestingdue = new VestingDue(alice, startTime, duration, interval);
+        token.mint(bob, vestingAmount);
 
         vm.startPrank(bob);
-        IERC20(address(token)).approve(address(vestingdue), 12000 ether);
-        vestingdue.init(address(token), 12000 ether);
+        IERC20(address(token)).approve(address(vestingdue), vestingAmount);
+        vestingdue.init(address(token), vestingAmount);
         vm.stopPrank();
     }
 
-    function test_Release() public {}
-
-    // function test_InitNonZeroAddressRevert() public {
-    //     vm.expectRevert(VestingDue.AddressCannotBeZero.selector);
-    //     vestingdue.init(address(0), 1200);
+    // function testFuzz_Release(uint256 releasingAmount) public {
+    //     // vm.assume(type(uint256).max - releasingAmount >= token.totalSupply());
+    //     // vm.assume(amount > 0);
+    //     //
+    //     //
     // }
+
+    // test by release begining of the month every month
+
+    // function testFuzz_Release(uint256 timeInSeconds) public {
+    //     // vm.assume(type(uint256).max - releasingAmount >= token.totalSupply());
+    //     vm.assume(3 days >= timeInSeconds);
+    //     vm.assume(timeInSeconds > 0);
+    //     //
+    //     //
+    // }
+
+    // test by release begining of the month every month
 
     // function test_InitNonZeroTokenRevert() public {
     //     vm.expectRevert(VestingDue.AmountCannotBeZero.selector);

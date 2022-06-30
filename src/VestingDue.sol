@@ -13,7 +13,6 @@ contract VestingDue is Initializable, VestingWallet {
     error AmountCannotBeZero();
 
     uint256 private _interval;
-    uint64 private _duration;
 
     constructor(
         address beneficiaryAddress,
@@ -27,7 +26,6 @@ contract VestingDue is Initializable, VestingWallet {
         );
         if (intervalInteger == 0) revert AmountCannotBeZero();
 
-        _duration = durationSeconds;
         _interval = intervalInteger;
     }
 
